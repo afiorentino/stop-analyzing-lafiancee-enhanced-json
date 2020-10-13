@@ -2,20 +2,26 @@ import org.json.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
-//import org.apache.*;
 
 public class enhancedJson {
 	public static void main(String args[]) {
 		ArrayList <String> urlPartList = findURLPart();
-		System.out.println(urlPartList);
-		saveURLPart(urlPartList);
+		JSONArray enhancedArray = new JSONArray();
 		for(int i = 0; i < urlPartList.size(); i++) {
 			try {
-				System.out.println(urlPartList.get(i));
-				uploadToServer(urlPartList.get(i));
+				enhancedArray.put(uploadToServer(urlPartList.get(i)));
 			} catch (Exception e) {
-				e.getMessage();
+				e.printStackTrace();
 			}
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("array", enhancedArray);
+		try {
+			FileWriter file = new FileWriter("enhancedJSON.json");
+			file.write(jsonObject.toString());
+			file.close();
+		} catch (Exception ex) {
+			ex.getMessage();
 		}
 	}
 
@@ -35,28 +41,8 @@ public class enhancedJson {
 		return urlPartList;
 	}
 
-	public static void saveURLPart(ArrayList<String> urlPartList) {
-		try {
-			FileWriter file = new FileWriter("urlPart.json");
-			file.write(toJSONString(urlPartList));
-			file.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static String toJSONString(ArrayList<String> urlPartList) {
-		String ret;
-		JSONObject obj = new JSONObject();
-		for(int i = 0; i < urlPartList.size(); i++) {
-			obj.put("urlPart", urlPartList.get(i));
-		}
-		ret = obj.toString();
-		return ret;
-	}
-
 	private static JSONObject uploadToServer(String urlPart) throws IOException, JSONException {
-		String site = "lafiancee.com.br/_api/wix-ecommerce-storefront-web/api";
+		String site = "https://www.lafiancee.com.br/_api/wix-ecommerce-storefront-web/api";
 		String productID = urlPart;
 		String json = "{" + 
     "\"credentials\": \"include\","+ 
@@ -223,7 +209,7 @@ public class enhancedJson {
           "shortKey" +
         "}" +
       "}" +
-    "}\",\"variables\":{\"slug\":productID,\"externalId\":\"\",\"withPricePerUnit\":true,\"withCountryCodes\":false},\"source\":\"WixStoresWebClient\",\"operationName\":\"getProductBySlug\"}\'," +
+    "}\",\"variables\":{\"slug\":"+ productID +",\"externalId\":\"\",\"withPricePerUnit\":true,\"withCountryCodes\":false},\"source\":\"WixStoresWebClient\",\"operationName\":\"getProductBySlug\"}\'," +
     "\"method\": \"POST\"" +
 "}";
 		URL url = new URL(site);
@@ -244,10 +230,6 @@ public class enhancedJson {
 
 		in.close();
 		conn.disconnect();
-
 		return jsonObject;
 	}
-			
-	
-			
 }
