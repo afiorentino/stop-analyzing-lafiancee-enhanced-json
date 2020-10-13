@@ -11,6 +11,7 @@ public class enhancedJson {
 		saveURLPart(urlPartList);
 		for(int i = 0; i < urlPartList.size(); i++) {
 			try {
+				System.out.println(urlPartList.get(i));
 				uploadToServer(urlPartList.get(i));
 			} catch (Exception e) {
 				e.getMessage();

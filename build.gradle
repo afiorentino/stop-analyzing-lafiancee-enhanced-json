@@ -1,0 +1,7 @@
+apply plugin: 'application'
+
+mainClassName = 'enhancedJson'
+
+dependencies {
+	implementation files('lib/json.jar','lib/commons-io-2.8.0.jar')
+}
